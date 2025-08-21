@@ -1,0 +1,11 @@
+* -text
+*.cs text eol=crlf
+*.c text eol=crlf
+*.cpp text eol=crlf
+*.h text eol=crlf
+*.ini text eol=crlf
+*.uproject text eol=crlf
+*.usf text eol=crlf
+.* text eol=lf
+
+/Plugins/** -text
