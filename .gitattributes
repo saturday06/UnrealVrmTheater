@@ -4,6 +4,7 @@
 *.cpp text eol=crlf
 *.h text eol=crlf
 *.ini text eol=crlf
+*.ps1 text eol=lf
 *.uproject text eol=crlf
 *.usf text eol=crlf
 .* text eol=lf
