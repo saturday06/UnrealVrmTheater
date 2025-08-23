@@ -84,7 +84,7 @@ public class VRM4ULoader : ModuleRules
 		{
 			string PlatformString = (Target.Platform == UnrealTargetPlatform.Win64) ? "x64" : "x86";
 
-			bool bDebug = false;
+			bool bDebug = true;
 
 			if (bDebug){
 				PublicDefinitions.Add("WITH_VRM4U_ASSIMP_DEBUG=1");
