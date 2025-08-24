@@ -56,4 +56,3 @@ if ($IsWindows) {
   Copy-Item (Join-Path $releaseAssimpBuildFolderPath "bin" "Release" "assimp-${vcVersion}-mt.pdb") (Join-Path $vrm4uAssimpFolderPath "bin" "x64")
   Copy-Item (Join-Path $releaseAssimpBuildFolderPath "lib" "Release" "assimp-${vcVersion}-mt.lib") (Join-Path $vrm4uAssimpFolderPath "lib" "x64" "Release")
 }
-
