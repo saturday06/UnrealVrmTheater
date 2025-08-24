@@ -9,16 +9,10 @@ if (-not (Test-Path $assimpSourceFolderPath)) {
 }
 
 $debugAssimpBuildFolderPath = Join-Path $assimpSourceFolderPath "build" "Debug"
-if (Test-Path $debugAssimpBuildFolderPath) {
-  Remove-Item -Recurse $debugAssimpBuildFolderPath
-}
-New-Item -ItemType Directory -Path $debugAssimpBuildFolderPath
+New-Item -ItemType Directory $debugAssimpBuildFolderPath -Force
 
 $releaseAssimpBuildFolderPath = Join-Path $assimpSourceFolderPath "build" "Release"
-if (Test-Path $releaseAssimpBuildFolderPath) {
-  Remove-Item -Recurse $releaseAssimpBuildFolderPath
-}
-New-Item -ItemType Directory -Path $releaseAssimpBuildFolderPath
+New-Item -ItemType Directory $releaseAssimpBuildFolderPath -Force
 
 $vcVersion = "vc143"
 $buildSharedLibs = $IsWindows ? "ON" : "OFF"
@@ -28,13 +22,15 @@ New-Item -ItemType Directory (Join-Path $vrm4uAssimpFolderPath "bin" "x64") -For
 New-Item -ItemType Directory (Join-Path $vrm4uAssimpFolderPath "lib" "x64" "Debug") -Force
 New-Item -ItemType Directory (Join-Path $vrm4uAssimpFolderPath "lib" "x64" "Release") -Force
 
-cmake `
-  -DASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT=OFF `
-  -DASSIMP_WARNINGS_AS_ERRORS=OFF `
-  "-DBUILD_SHARED_LIBS=${buildSharedLibs}" `
-  -DCMAKE_BUILD_TYPE=Debug `
-  -S $assimpSourceFolderPath `
-  -B $debugAssimpBuildFolderPath
+if (-not (Test-Path (Join-Path $debugAssimpBuildFolderPath "CMakeCache.txt"))) {
+  cmake `
+    -DASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT=OFF `
+    -DASSIMP_WARNINGS_AS_ERRORS=OFF `
+    "-DBUILD_SHARED_LIBS=${buildSharedLibs}" `
+    -DCMAKE_BUILD_TYPE=Debug `
+    -S $assimpSourceFolderPath `
+    -B $debugAssimpBuildFolderPath
+}
 cmake --build $debugAssimpBuildFolderPath --config Debug
 if ($IsWindows) {
   Copy-Item (Join-Path $debugAssimpBuildFolderPath "bin" "Debug" "assimp-${vcVersion}-mtd.dll") (Join-Path $vrm4uAssimpFolderPath "bin" "x64")
@@ -46,13 +42,15 @@ elseif ($IsMacOS) {
 }
 
 if ($IsWindows) {
-  cmake `
-    -DASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT=OFF `
-    -DASSIMP_WARNINGS_AS_ERRORS=OFF `
-    "-DBUILD_SHARED_LIBS=${buildSharedLibs}" `
-    -DCMAKE_BUILD_TYPE=Release `
-    -S $assimpSourceFolderPath `
-    -B $releaseAssimpBuildFolderPath
+  if (-not (Test-Path (Join-Path $releaseAssimpBuildFolderPath "CMakeCache.txt"))) {
+    cmake `
+      -DASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT=OFF `
+      -DASSIMP_WARNINGS_AS_ERRORS=OFF `
+      "-DBUILD_SHARED_LIBS=${buildSharedLibs}" `
+      -DCMAKE_BUILD_TYPE=Release `
+      -S $assimpSourceFolderPath `
+      -B $releaseAssimpBuildFolderPath
+  }
   cmake --build $releaseAssimpBuildFolderPath --config Release
   Copy-Item (Join-Path $releaseAssimpBuildFolderPath "bin" "Release" "assimp-${vcVersion}-mt.dll") (Join-Path $vrm4uAssimpFolderPath "bin" "x64")
   Copy-Item (Join-Path $releaseAssimpBuildFolderPath "bin" "Release" "assimp-${vcVersion}-mt.pdb") (Join-Path $vrm4uAssimpFolderPath "bin" "x64")
