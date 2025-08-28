@@ -365,7 +365,10 @@ bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiSce
 			ParamTable.Add("_EmisionColor", "mtoon_EmissionColor");
 			ParamTable.Add("_OutlineColor", "mtoon_OutColor");
 
+			if (jsonData.doc["extensions"]["VRM"].IsObject()) {
+			if (jsonData.doc["extensions"]["VRM"]["blendShapeMaster"].IsObject()) {
 			auto& group = jsonData.doc["extensions"]["VRM"]["blendShapeMaster"]["blendShapeGroups"];
+			if (group.IsArray()) {
 			for (int i = 0; i < (int)group.Size(); ++i) {
 				auto& bind = MetaObject->BlendShapeGroup[i];
 
@@ -393,6 +396,9 @@ bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiSce
 						mat["targetValue"].GetArray()[3].GetFloat());
 					bind.MaterialList.Add(mlist);
 				}
+			}
+			}
+			}
 			}
 		}
 	}
