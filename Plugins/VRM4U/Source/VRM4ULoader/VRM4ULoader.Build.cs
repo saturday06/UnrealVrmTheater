@@ -84,26 +84,26 @@ public class VRM4ULoader : ModuleRules
 		{
 			string PlatformString = (Target.Platform == UnrealTargetPlatform.Win64) ? "x64" : "x86";
 
-			bool bDebug = true;
+			bool bDebug = false;
 
 			if (bDebug){
 				PublicDefinitions.Add("WITH_VRM4U_ASSIMP_DEBUG=1");
 
 				string BuildString = (Target.Configuration != UnrealTargetConfiguration.Debug) ? "Debug" : "Debug";
-				PublicAdditionalLibraries.Add(Path.Combine(ThirdPartyPath, "assimp", "lib", PlatformString, BuildString, "assimp-vc143-mtd.lib"));
+				PublicAdditionalLibraries.Add(Path.Combine(ThirdPartyPath, "assimp", "lib", PlatformString, BuildString, "assimp-vc141-mtd.lib"));
 
-				PublicDelayLoadDLLs.Add("assimp-vc143-mtd.dll");
-				RuntimeDependencies.Add(Path.Combine(ThirdPartyPath, "assimp", "bin", PlatformString, "assimp-vc143-mtd.dll"));
+				PublicDelayLoadDLLs.Add("assimp-vc141-mtd.dll");
+				RuntimeDependencies.Add(Path.Combine(ThirdPartyPath, "assimp", "bin", PlatformString, "assimp-vc141-mtd.dll"));
 			}
 			else
 			{
 				PublicDefinitions.Add("WITH_VRM4U_ASSIMP_DEBUG=0");
 
 				string BuildString = (Target.Configuration != UnrealTargetConfiguration.Debug) ? "Release" : "Release";
-				PublicAdditionalLibraries.Add(Path.Combine(ThirdPartyPath, "assimp", "lib", PlatformString, BuildString, "assimp-vc143-mt.lib"));
+				PublicAdditionalLibraries.Add(Path.Combine(ThirdPartyPath, "assimp", "lib", PlatformString, BuildString, "assimp-vc141-mt.lib"));
 
-				PublicDelayLoadDLLs.Add("assimp-vc143-mt.dll");
-				RuntimeDependencies.Add(Path.Combine(ThirdPartyPath, "assimp", "bin", PlatformString, "assimp-vc143-mt.dll"));
+				PublicDelayLoadDLLs.Add("assimp-vc141-mt.dll");
+				RuntimeDependencies.Add(Path.Combine(ThirdPartyPath, "assimp", "bin", PlatformString, "assimp-vc141-mt.dll"));
 
 			}
 		}

@@ -112,9 +112,9 @@ class FVRM4ULoaderModule : public IModuleInterface {
 		}
 
 		{
-			auto dllName = TEXT("assimp-vc143-mt.dll");
+			auto dllName = TEXT("assimp-vc141-mt.dll");
 #if WITH_VRM4U_ASSIMP_DEBUG
-			dllName = TEXT("assimp-vc143-mtd.dll");
+			dllName = TEXT("assimp-vc141-mtd.dll");
 #endif
 			{
 				FString AbsPath = IPluginManager::Get().FindPlugin("VRM4U")->GetBaseDir() / TEXT("ThirdParty/assimp/bin/x64");
