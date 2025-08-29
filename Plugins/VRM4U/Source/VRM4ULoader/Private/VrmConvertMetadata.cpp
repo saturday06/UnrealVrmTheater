@@ -377,6 +377,7 @@ bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiSce
 					continue;
 				}
 				for (auto& mat : shape["materialValues"].GetArray()) {
+					if (mat.IsArray()) {
 					FVrmBlendShapeMaterialList mlist;
 					mlist.materialName = mat["materialName"].GetString();
 					mlist.propertyName = mat["propertyName"].GetString();
@@ -395,6 +396,7 @@ bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiSce
 						mat["targetValue"].GetArray()[2].GetFloat(),
 						mat["targetValue"].GetArray()[3].GetFloat());
 					bind.MaterialList.Add(mlist);
+					}
 				}
 			}
 			}
