@@ -377,7 +377,7 @@ bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiSce
 					continue;
 				}
 				for (auto& mat : shape["materialValues"].GetArray()) {
-					if (mat.IsArray()) {
+					if (mat.IsObject()) {
 					FVrmBlendShapeMaterialList mlist;
 					mlist.materialName = mat["materialName"].GetString();
 					mlist.propertyName = mat["propertyName"].GetString();
