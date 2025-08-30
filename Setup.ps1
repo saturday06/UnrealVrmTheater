@@ -4,7 +4,7 @@ Set-StrictMode -Version 3.0
 $ErrorActionPreference = "Stop"
 
 $assimpSourceFolderPath = Join-Path $PSScriptRoot "PatchedAssimp"
-if (-not (Test-Path $assimpSourceFolderPath)) {
+if (-not (Test-Path (Join-Path $assimpSourceFolderPath "Readme.md"))) {
   git -C $PSScriptRoot submodule update --init --recursive
 }
 
