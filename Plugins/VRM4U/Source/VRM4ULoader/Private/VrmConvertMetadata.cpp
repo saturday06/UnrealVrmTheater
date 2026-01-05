@@ -59,7 +59,7 @@ bool VRMConverter::InitJSON(const uint8* pFileData, size_t dataSize) {
 
 	uint32_t jsonSize = 0;
 	if (glTFversion == 1) {
-		// glTF 1.0 GLB VRMìIÇ…ÇÕïsóvÇæÇ™îOÇÃÇΩÇﬂ
+		// glTF 1.0 GLB VRMÁöÑ„Å´„ÅØ‰∏çË¶Å„Å†„ÅåÂøµ„ÅÆ„Åü„ÇÅ
 		const uint32_t content_length = readData(pFileData, 12);
 		const uint32_t content_format = readData(pFileData, 16);
 		if (content_format != 0) {
@@ -138,6 +138,24 @@ bool VRMConverter::ConvertVrmFirst(UVrmAssetListObject* vrmAssetList, const uint
 
 
 bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiScene* mScenePtr, const uint8* pData, size_t dataSize) {
+
+	//auto GetDataJSON = [](const RAPIDJSON_NAMESPACE::Value& root, std::initializer_list<const char*> path) -> std::optional<const RAPIDJSON_NAMESPACE::Value*> {
+	auto GetDataJSON = [](const RAPIDJSON_NAMESPACE::Value& root, std::initializer_list<const char*> path) -> std::pair<bool, const RAPIDJSON_NAMESPACE::Value*> {
+		const RAPIDJSON_NAMESPACE::Value* current = &root;
+
+		for (const char* key : path) {
+			if (current->IsObject() == false) {
+				return { false, nullptr };
+			}
+			auto itr = current->FindMember(key);
+			if (itr == current->MemberEnd()) {
+				return { false, nullptr };
+			}
+			current = &itr->value;
+		}
+		return { true, current };
+		};
+
 
 	tmpLicense0 = nullptr;
 	tmpLicense1 = nullptr;
@@ -288,15 +306,21 @@ bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiSce
 
 				{
 					int tmpNodeID = bind["node"].GetInt(); // adjust offset
-					int tmpMeshID = jsonData.doc["nodes"].GetArray()[tmpNodeID]["mesh"].GetInt();
+					auto& jsonNode = jsonData.doc["nodes"];
 
-					//meshID offset
-					int offset = 0;
-					for (int meshNo = 0; meshNo < tmpMeshID; ++meshNo) {
-						if (jsonData.doc["meshes"].GetArray()[meshNo].HasMember("primitives") == false) continue;
-						//offset += jsonData.doc["meshes"].GetArray()[meshNo]["primitives"].Size() - 1;
+					if (tmpNodeID >= 0 && tmpNodeID < (int)jsonNode.Size()) {
+						if (GetDataJSON(jsonNode.GetArray()[tmpNodeID], { "mesh" }).second){
+							int tmpMeshID = jsonNode.GetArray()[tmpNodeID]["mesh"].GetInt();
+
+							//meshID offset
+							int offset = 0;
+							for (int meshNo = 0; meshNo < tmpMeshID; ++meshNo) {
+								if (jsonData.doc["meshes"].GetArray()[meshNo].HasMember("primitives") == false) continue;
+								//offset += jsonData.doc["meshes"].GetArray()[meshNo]["primitives"].Size() - 1;
+							}
+							targetShape.meshID = tmpMeshID + offset;
+						}
 					}
-					targetShape.meshID = tmpMeshID + offset;
 				}
 
 				if (targetShape.meshID < (int)jsonData.doc["meshes"].Size()) {
@@ -355,23 +379,6 @@ bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiSce
 			}
 		}
 	}
-
-	//auto GetDataJSON = [](const RAPIDJSON_NAMESPACE::Value& root, std::initializer_list<const char*> path) -> std::optional<const RAPIDJSON_NAMESPACE::Value*> {
-	auto GetDataJSON = [](const RAPIDJSON_NAMESPACE::Value& root, std::initializer_list<const char*> path) -> std::pair<bool, const RAPIDJSON_NAMESPACE::Value*> {
-		const RAPIDJSON_NAMESPACE::Value* current = &root;
-
-		for (const char* key : path) {
-			if (current->IsObject() == false) {
-				return { false, nullptr };
-			}
-			auto itr = current->FindMember(key);
-			if (itr == current->MemberEnd()) {
-				return { false, nullptr };
-			}
-			current = &itr->value;
-		}
-		return { true, current };
-	};
 
 	// tmp shape...
 	if (pData && vrmAssetList) {
